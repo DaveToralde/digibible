@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resizable Div with Adaptive Text</title>
+<style>
+    #resizable-div {
+        width: 300px;
+        height: 300px;
+        border: 2px solid #000;
+        resize: both;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 20px;
+        box-sizing: border-box;
+        font-size: 20px; /* Starting font size */
+        word-wrap: break-word;
+    }
+</style>
+</head>
+<body>
+<div id="resizable-div" contenteditable="true">
+    Editable text here
+</div>
+<script>
+    const div = document.getElementById('resizable-div');
+
+    function adjustFontSize() {
+        let currentFontSize = parseInt(window.getComputedStyle(div).fontSize);
+        div.style.fontSize = `${currentFontSize}px`; // Reset font size to current to begin adjustments
+
+        // Increase font size until overflow
+        while (!isOverflown(div) && currentFontSize < 100) { // Maximum font size cap
+            currentFontSize++;
+            div.style.fontSize = `${currentFontSize}px`;
+        }
+
+        // Decrease font size until no overflow
+        while (isOverflown(div) && currentFontSize > 1) { // Minimum font size cap
+            currentFontSize--;
+            div.style.fontSize = `${currentFontSize}px`;
+        }
+    }
+
+    function isOverflown(element) {
+        return element.scrollHeight > element.clientHeight || element.scrollWidth > element.clientWidth;
+    }
+
+    const resizeObserver = new ResizeObserver(entries => {
+        for (let entry of entries) {
+            adjustFontSize();
+        }
+    });
+
+    resizeObserver.observe(div);
+    document.addEventListener('input', adjustFontSize); // Adjust font on text edit
+</script>
+</body>
+</html>
